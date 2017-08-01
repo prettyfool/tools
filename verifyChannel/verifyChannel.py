@@ -15,7 +15,7 @@ result = {}
 def tugeleLinks():
     """
     @des 获取所有的渠道包下载连接
-	@urls 返回所有下载链接列表
+    @urls 返回所有下载链接列表
     """
     logger.info('get download links...')
     url = 'http://10.134.242.187:8080/job/SGTugele/lastSuccessfulBuild/artifact/bin/'
