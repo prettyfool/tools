@@ -51,7 +51,7 @@ def getManifest(path):
 	@des 解apk包
 	"""
     cmd = 'java -jar apktool.jar d %s > nul' % path
-    logger.info('parsing package...')
+    logger.info('parsing package..')
     logger.info(os.path.basename(path))
     os.system(cmd)
 
