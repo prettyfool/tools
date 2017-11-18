@@ -1,12 +1,15 @@
 # coding:utf-8
 import re
 import requests
-from lxml import etree
 import os
-import shutil
-import logger
 
-logger = logger.logger
+try:
+    import xml.etree.cElementTree as ET
+except:
+    import xml.etree.ElementTree as ET
+import shutil
+from logUtil import logger
+
 result = {}
 
 
@@ -59,12 +62,18 @@ def getManifest(path):
 def getChannel(xml):
     """
 	@des 解析Manifest.xml获取channelID,pushTag
+	@param xml xml文件的路径
 	@return [channelID,pushTag]
 	"""
-    info = {}
-    tree = etree.parse(xml)
-    meta = tree.xpath('//meta-data')
-    return [me.values()[1] for me in meta][0:2]
+    res = []
+    tree = ET.parse(xml)
+    application = tree.getroot().find('application')
+    for meta in application.findall('meta-data'):
+        if meta.get('android:name') == "SGTUGELE_CHANNEL_ID":
+            res.append(meta.get('android:value'))
+        if meta.get('android:name') == "SGTUGELE_PUSH_TAG":
+            res.append(meta.get('android:value'))
+    return res
 
 
 def getTemp():
@@ -122,20 +131,17 @@ def report():
 
 
 if __name__ == '__main__':
-    # 下载所有安装包
-    if not os.path.exists('package'):
-        logger.info('package is not exist ,creating it...')
-        os.mkdir('package')
-    apklist = os.listdir('package')
-    if not len(apklist):
-        links = tugeleLinks()
-        logger.info('downloading ...')
-        for url in links:
-            downAPK(url, out='package')
-        apklist = os.listdir('package')
+    # if not os.path.exists('package'):
+    #     logger.info('package is not exist ,creating it...')
+    #     os.mkdir('package')
 
+    package_path = r'D:\mobile'  # 渠道包的目录地址
+    apklist = os.listdir(package_path)
+    if not len(apklist):
+        logger.error('no apk fils in %s' % package_path)
+        exit()
     for apk in apklist:
-        path = os.path.join(os.curdir, 'package', apk)
+        path = os.path.join(package_path, apk)
         verify(path)
         clear()
     report()
