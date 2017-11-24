@@ -1,2 +1,6 @@
 # tools
-## 主要用于存放一些项目用的小工具
+这个目录主要存放一些个人使用的工具脚本
+
+- [grep64-color](grep64-color/README.md)
+- [testTools](testTools/README.md)
+- [verifyChannel](verifyChannel/README.md)
