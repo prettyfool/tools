@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import sys
-import os
 import re
 import time
 
@@ -28,4 +27,5 @@ while True:
             p = p2
         f.close()
     except KeyboardInterrupt:
+        f.close()
         break
