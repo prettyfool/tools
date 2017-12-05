@@ -5,7 +5,7 @@ import os
 import re
 
 
-def getDPI():
+def getDPI(type='str'):
     '''
     获取设备分辨率
     '''
@@ -17,7 +17,17 @@ def getDPI():
         if d:
             DPI = d.group(1)
             break
-    return DPI
+    if type == 'str':
+        return DPI
+    if type == 'tuple':
+        return tuple(DPI.split('x'))
+    if type == 'list':
+        return DPI.split('x')
+    if type == 'dict':
+        dic = {}
+        dic['width'], dic['high'] = DPI.split('x')
+        return dic
+
 
 
 def getInstalledAPP():
@@ -28,8 +38,8 @@ def getInstalledAPP():
     cmd = "adb shell pm list packages -3"
     std = os.popen(cmd)
     for line in std:
-        if line:
-            package = re.search('package:([\.a-zA-Z0-9]+)', line).group(1)
+        if line and line.startswith('package'):
+            package = re.search('package:(\S+)', line).group(1)
             installed.append(package)
     return installed
 
@@ -59,4 +69,5 @@ def getANR():
 
 
 if __name__ == "__main__":
-    print getDeviceId()
+    # print getInstalledAPP()
+    print getDPI(type='dict')
