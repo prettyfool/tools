@@ -5,10 +5,31 @@ import os
 import re
 
 
+def getBrand():
+    # 获取手机厂商名称
+    cmd = "adb shell getprop ro.product.brand"
+    std = os.popen(cmd)
+    brand = std.readline().strip()
+    return brand
+
+
+def getModel():
+    # 获取手机型号
+    cmd = "adb shell getprop ro.product.model"
+    std = os.popen(cmd)
+    model = std.readline().strip()
+    return model
+
+
+def getOSVersion():
+    # 获取系统版本号
+    cmd = "adb shell getprop ro.build.version.release"
+    std = os.popen(cmd)
+    version = std.readline().strip()
+    return version
+
 def getDPI(type='str'):
-    '''
-    获取设备分辨率
-    '''
+    # 获取设备分辨率
     cmd = "adb shell dumpsys window displays"
     std = os.popen(cmd)
     pattern = re.compile('init=(\d+x\d+)')
@@ -29,33 +50,13 @@ def getDPI(type='str'):
         return dic
 
 
-
-def getInstalledAPP():
-    '''
-    获取已安装的第三方应用列表
-    '''
-    installed = []
-    cmd = "adb shell pm list packages -3"
-    std = os.popen(cmd)
-    for line in std:
-        if line and line.startswith('package'):
-            package = re.search('package:(\S+)', line).group(1)
-            installed.append(package)
-    return installed
-
-
 def getDeviceId():
+    # 获取设备序列号
+    # 连接多个设备时，返回序列号列表
     cmd = "adb devices"
     std = os.popen(cmd)
     lines = std.readlines()
     if len(lines) < 2: return None
-
-    # ids = []
-    # for line in lines[1:]:
-    #     res = re.search('([0-9a-zA-Z]+)', line)
-    #     if res:
-    #         ids.append(res.group(1))
-
     ids = [line.split('\t')[0].strip() for line in lines if '\t' in line]
     if len(ids) < 2:
         return ids[0]
@@ -64,10 +65,13 @@ def getDeviceId():
 
 
 def getANR():
+    # 获取ANR 日志到脚本执行目录
     cmd = 'adb pull /data/anr/traces.txt .'
     os.popen(cmd)
 
 
 if __name__ == "__main__":
     # print getInstalledAPP()
-    print getDPI(type='dict')
+    # print getDPI(type='dict')
+    # print getOSVersion()
+    print getModel()
