@@ -11,7 +11,6 @@ def getFileMd5(file_path):
     @file_path 文件的路径
     @return    文件的md5值
     """
-
     if not os.path.exists(file_path):
         return None
     mHash = hashlib.md5()
