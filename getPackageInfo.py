@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 import os, re
-import shutil
 
 
 def getLaunchActivity(apk):
@@ -56,4 +55,4 @@ if __name__ == '__main__':
     # print getLaunchActivity(apk)
     # print getPackageName(apk)
     # print getAPPInfo(apk)
-    print getManifest(apk)
+    print getLaunchActivity(apk)
