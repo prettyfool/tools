@@ -76,8 +76,8 @@ def getANR():
 
 if __name__ == "__main__":
     init()
-    print getBrand()
-    print getModel()
-    print getOSVersion()
-    print getDPI()
-    print getDeviceId()
+    print(getBrand())
+    print(getModel())
+    print(getOSVersion())
+    print(getDPI())
+    print(getDeviceId())

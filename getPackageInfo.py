@@ -55,4 +55,4 @@ if __name__ == '__main__':
     # print getLaunchActivity(apk)
     # print getPackageName(apk)
     # print getAPPInfo(apk)
-    print getLaunchActivity(apk)
+    print(getLaunchActivity(apk))

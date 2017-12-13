@@ -23,6 +23,6 @@ def download(url, **kwargs):
     filename = kwargs.get('xlsx_file', os.path.basename(url))
     with closing(get(url, filename, stream=True, verify=False)) as r:
         with open(os.path.join(outdir, filename), 'wb') as f:
-            print 'downloading %s' % filename
+            print('downloading %s' % filename)
             for chunk in r.iter_content(CHUNK_SIZE):
                 f.write(chunk)
