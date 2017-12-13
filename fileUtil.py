@@ -26,4 +26,4 @@ def getFileMd5(file_path):
 if __name__ == "__main__":
     filepath = r'E:\package\PKG_tugele\SGTugele_v4.0.0_Build_918_20171117_test_tugele_debug.apk'
     md5 = getFileMd5(filepath)
-    print md5
+    print(md5)
