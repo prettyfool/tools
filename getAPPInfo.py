@@ -52,5 +52,5 @@ if __name__ == '__main__':
     # print time
 
     packagename = 'com.xp.tugele'
-    # print _getPID(packagename)
+    # print getPID(packagename)
     print(getFlow(packagename))
