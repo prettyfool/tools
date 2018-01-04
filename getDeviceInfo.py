@@ -70,7 +70,7 @@ def getANR():
     '''
     # 获取ANR 日志到脚本执行目录
     '''
-    cmd = 'adb pull /data/anr/traces.txt .'
+    cmd = 'adb pull /datasource/anr/traces.txt .'
     os.popen(cmd)
 
 

@@ -6,8 +6,8 @@ from configparser import ConfigParser
 
 def get_config(file_ini):
     """
-    @ file_ini  file path of data
-    @ return object of data
+    @ file_ini  file path of datasource
+    @ return object of datasource
     """
     conf = ConfigParser()
     conf.read(file_ini)
