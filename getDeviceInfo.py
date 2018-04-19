@@ -11,7 +11,7 @@ def init():
     '''
     cmd = 'adb start-server'
     std = os.popen(cmd)
-    if std: return
+    if std: return True
 
 
 def getBrand():
