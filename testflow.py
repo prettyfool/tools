@@ -3,6 +3,7 @@ __author__ = 'anyone'
 import os
 import time
 import subprocess
+import sys
 
 
 def _exec(cmd):
@@ -77,7 +78,9 @@ if __name__ == '__main__':
     luanchActivity = 'com.xp.tugele/com.xp.tugele.ui.LunchActivity'
 
     # 监控20秒，监控多久自己控制
-    LIMIT = 20
+    limit = 20
+    if sys.argv[1]:
+        limit = int(sys.argv[1])
 
     # 初始化adb
     initADB()
@@ -111,13 +114,13 @@ if __name__ == '__main__':
                   '上行：', tx_mb, 'MB\t',
                   '总流量', round(rx_mb + tx_mb, 3), 'MB\t'
                   )
-            if n == LIMIT:
+            if n == limit:
                 break
         except KeyboardInterrupt:
             break
 
     print(
-        '统计时长：%d s' % LIMIT
+        '统计时长：%d s' % limit
     )
     print(
         '实际下行流量：', rx_mb, 'MB\t',
