@@ -66,11 +66,8 @@ def getFlow(packagename, uid=None):
     snd = os.popen(cmd_snd).readlines()[0].strip()
     return eval(rcv), eval(snd)
 
-
 # nowstrf = lambda: time.strftime("%Y%m%d%H%M%S", time.localtime())
 # nowstamp = lambda: time.time()
-
-
 
 if __name__ == '__main__':
     # 应用信息
@@ -79,7 +76,7 @@ if __name__ == '__main__':
 
     # 监控20秒，监控多久自己控制
     limit = 20
-    if sys.argv[1]:
+    if len(sys.argv) > 1:
         limit = int(sys.argv[1])
 
     # 初始化adb
@@ -106,14 +103,11 @@ if __name__ == '__main__':
             flow_rx, flow_tx = end_rx - stard_rx, end_tx - start_tx
             rx_kb, tx_kb = round(flow_rx / 1024, 3), round(flow_tx / 1024, 3)
             rx_mb, tx_mb = round(flow_rx / 1024 / 1024, 3), round(flow_tx / 1024 / 1024, 3)
-            print(n,
-                  '下行：', rx_kb, 'KB\t',
-                  '上行：', tx_kb, 'KB\t',
-                  '总流量', round(rx_kb + tx_kb, 3), 'KB\t\t',
-                  '下行：', rx_mb, 'MB\t',
-                  '上行：', tx_mb, 'MB\t',
-                  '总流量', round(rx_mb + tx_mb, 3), 'MB\t'
-                  )
+            resb = '下行：{rx_kb:>10}KB  上行：{tx_kb:>10}KB  总流量: {b:>10}KB'.format(rx_kb=rx_kb, tx_kb=tx_kb,
+                                                                               b=round(rx_kb + tx_kb, 3))
+            resm = '下行：{rx_mb:>10}MB  上行：{tx_mb:>10}MB  总流量: {m:>10}KB'.format(rx_mb=rx_mb, tx_mb=tx_mb,
+                                                                               m=round(rx_mb + tx_mb, 3))
+            print('{0:>3}'.format(n), resb, '\t', resm)
             if n == limit:
                 break
         except KeyboardInterrupt:
