@@ -50,7 +50,7 @@ def getFlowFromUid(packagename, uid=None):
     d_flow = []
     u_flow = []
     for line in std:
-        if 'wlan' in line and '0x0' not in line:
+        if 'wlan' in line and '0x0' in line:
             data = line.split()
             d_flow.append(int(data[5]))
             u_flow.append(int(data[7]))
@@ -71,8 +71,10 @@ def getFlow(packagename, uid=None):
 
 if __name__ == '__main__':
     # 应用信息
-    packagename = 'com.xp.tugele'
-    luanchActivity = 'com.xp.tugele/com.xp.tugele.ui.LunchActivity'
+    # packagename = 'com.xp.tugele'
+    # luanchActivity = 'com.xp.tugele/com.xp.tugele.ui.LunchActivity'
+    packagename = 'com.tugele.expression'
+    luanchActivity = 'com.tugele.expression/.MainActivity'
 
     # 监控20秒，监控多久自己控制
     limit = 20
@@ -84,8 +86,9 @@ if __name__ == '__main__':
     # 清除应用数据
     initAPP(packagename)
 
-    # pid = getPID(packagename)
+    # pid = get_app_pid(packagename)
     uid = getUserId(packagename)
+    print(uid)
 
     # 获取应用初始上下行流量
     stard_rx, start_tx = getFlowFromUid(packagename, uid)

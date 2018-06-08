@@ -5,7 +5,7 @@ import hashlib
 BLOCK_SIZE = 1024 * 8  # 单次最大读取文件字节大小
 
 
-def getFileMd5(file_path):
+def get_file_md5(file_path):
     """
     @desc      获取文件的md5值
     @file_path 文件的路径
@@ -24,6 +24,6 @@ def getFileMd5(file_path):
 
 
 if __name__ == "__main__":
-    filepath = r'E:\package\PKG_tugele\SGTugele_v4.0.0_Build_918_20171117_test_tugele_debug.apk'
-    md5 = getFileMd5(filepath)
+    file_path = r'E:\package\PKG_tugele\SGTugele_v4.4.0_Build_1141_20180607_test_tugele_debug.apk'
+    md5 = get_file_md5(file_path)
     print(md5)
