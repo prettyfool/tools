@@ -42,7 +42,7 @@ def unpack_apk(apkpath):
     """
     : 反编译apk到当前目录
     """
-    cmd = 'java -jar apktool.jar d %s' % apkpath
+    cmd = 'java -jar .\\lib\\apktool.jar d %s' % apkpath
     os.popen(cmd)
 
 
