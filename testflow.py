@@ -37,7 +37,6 @@ def getUserId(packagename):
     std = os.popen(cmd).readline()
     return std.split('=')[1].strip()
 
-
 def getFlowFromUid(packagename, uid=None):
     '''
     # 通过应用uid，获取应用当前消耗的流量
