@@ -5,7 +5,7 @@ import os
 import re
 
 
-def init():
+def start_adb():
     """
     : 启动adb
     : return 启动成功返回True
