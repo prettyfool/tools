@@ -3,18 +3,22 @@ import os
 import sys
 
 DOUTU_CARASH = 'log\.gif\?(.*)KeyboardState.*'
+QUERY_STRING = DOUTU_CARASH
+LOG_DATE = '(\d+/[a-zA-Z]+/\d+)'
 
 
 class Log(object):
-    def __init__(self, querysting, **kwargs):
+    def __init__(self, line, **kwargs):
         """
         :param querysting: 只包含主要信息的消息体，即url中的参数
         :param split: 
         :param kwargs: 
         """
+        self.line = line
+        self._querystring = self._get_querystring()
         self.params = {}
-        if querysting and isinstance(querysting, str):
-            for param in querysting.split('&'):
+        if self._querystring:
+            for param in self._querystring.split('&'):
                 p_list = param.split('=')
                 if len(p_list) == 2:
                     k, v = p_list
@@ -25,13 +29,23 @@ class Log(object):
             for m, n in kwargs:
                 self.set(m, n)
 
+    def _get_querystring(self):
+        """
+        获取log 的querystring
+        :return:
+        """
+        try:
+            re_info = re.compile(QUERY_STRING)
+            query = re.search(re_info, self.line).group(1)
+            return query
+        except:
+            return None
+
     def set(self, name, value):
         setattr(self, name, value)
 
     def get(self, name):
-        value = getattr(self, name, None)
-        if value is None:
-            value = self.params.get(name, None)
+        value = getattr(self, name, None) or self.params.get(name, None)
         return value
 
     @property
@@ -39,27 +53,23 @@ class Log(object):
         return self.line.split()[0]
 
     @property
+    def time(self):
+        return self.line.split()[1]
+
+    @property
     def date(self):
-        re_date = re.compile('(\d+/[a-zA-Z]+/\d+)')
-        date = re.search(re_date, self.line).group(1)
-        return date.replace('/', '-')
+        try:
+            re_date = re.compile(LOG_DATE)
+            date = re.search(re_date, self.line).group(1)
+            return date.replace('/', '-')
+        except:
+            return None
 
 
 class InputCrashLog(Log):
     def __init__(self, line, **kwargs):
-        if isinstance(line, str):
-            self.line = line.replace('log=log=', 'log=').strip()
-        querystring = self._get_querystring()
-        super(InputCrashLog, self).__init__(querystring, **kwargs)
-
-    def _get_querystring(self):
-        """
-        获取log主体
-        :return:
-        """
-        re_info = re.compile(DOUTU_CARASH)
-        q = re.search(re_info, self.line).group(1)
-        return q
+        line = line.replace('log=log=', 'log=').strip()
+        super(InputCrashLog, self).__init__(line, **kwargs)
 
     @property
     def imei(self):
@@ -84,6 +94,25 @@ class InputCrashLog(Log):
 
 
 class Process(object):
+    def write_file(self, lines, file_path):
+        with open(file_path, 'a+') as fp:
+            if isinstance(lines, str):
+                fp.write(lines)
+            if isinstance(lines, list):
+                fp.writelines(lines)
+        return file_path
+
+    def read_file(self, file_path, filter=None):
+        with open(file_path) as fp:
+            for line in fp:
+                if filter is None:
+                    yield line
+                    continue
+                if filter and filter in line:
+                    yield line
+
+
+class InputProcess(Process):
     def __init__(self, inputfile):
         self.inputfile = inputfile if os.path.isabs(inputfile) else os.path.abspath(inputfile)
         out_dir, ext = os.path.splitext(self.inputfile)
@@ -102,25 +131,10 @@ class Process(object):
         self.crashs_list = []
         self.crash_count = {}
 
-    def write_file(self, lines, file_path):
-        with open(file_path, 'a+') as fp:
-            if isinstance(lines, str):
-                fp.write(lines)
-            if isinstance(lines, list):
-                fp.writelines(lines)
-        return file_path
-
-    def read_file(self, file_path):
-        with open(file_path) as fp:
-            for line in fp:
-                if 'doutu' in line:
-                    yield line
-
     def run(self):
-        lines = self.read_file(self.inputfile)
+        lines = self.read_file(self.inputfile, 'doutu')
         for line in lines:
             crash_info = InputCrashLog(line)
-            # print('write lines:%s : %s:' % (self.doutu_file, line))
             self.write_file(line, self.doutu_file)
             if 'ClassNotFoundException' not in line:
                 self.write_file(line, self.without_classnotfind_file)
@@ -136,7 +150,6 @@ class Process(object):
             imei = crash_info.imei
 
             if imei and date:
-                # print('date:%s imei: %s' % (date, imei))
                 if imei not in self.temp:
                     self.imeis.append(date + '\t' + imei + '\n')
                     self.temp.add(imei)
@@ -151,7 +164,7 @@ class Process(object):
 
 
 if __name__ == '__main__':
-    log_path = r'D:\TestData\log_analysis\plugin_crash_log\0920Test'
+    log_path = r'D:\TestData\log_analysis\plugin_crash_log\test'
     if len(sys.argv) > 1:
         log_path = sys.argv[1]
     if os.path.isdir(log_path):
@@ -160,5 +173,5 @@ if __name__ == '__main__':
         log_list = [log_path]
     for log_file in log_list:
         if os.path.isfile(log_file):
-            process = Process(log_file)
+            process = InputProcess(log_file)
             process.run()
