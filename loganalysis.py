@@ -120,6 +120,8 @@ class InputProcess(Process):
             os.mkdir(out_dir)
         self.output = out_dir
         file_name = os.path.basename(log_file)
+        if not ext:
+            file_name = file_name + '.log'
         self.imei_file = os.path.join(self.output, 'imei_' + file_name)
         self.doutu_file = os.path.join(self.output, 'total_crash_' + file_name)
         self.without_classnotfind_file = os.path.join(self.output, 'without_classnotfind_' + file_name)
@@ -135,14 +137,15 @@ class InputProcess(Process):
         lines = self.read_file(self.inputfile, 'doutu')
         for line in lines:
             crash_info = InputCrashLog(line)
-            self.write_file(line, self.doutu_file)
+            if line:
+                self.write_file(line, self.doutu_file)
             if 'ClassNotFoundException' not in line:
                 self.write_file(line, self.without_classnotfind_file)
                 crash = crash_info.crash_log + '\n'
                 flag = crash[:240]
                 if flag not in self.crashs:
                     self.crashs.add(flag)
-                    self.crashs_list.append(crash)
+                    self.crashs_list.append(line)
                     self.crash_count[flag] = 1
                 else:
                     self.crash_count[flag] += 1
@@ -150,9 +153,10 @@ class InputProcess(Process):
             imei = crash_info.imei
 
             if imei and date:
-                if imei not in self.temp:
-                    self.imeis.append(date + '\t' + imei + '\n')
-                    self.temp.add(imei)
+                i_d_tuple = (imei, date)
+                if i_d_tuple not in self.temp:
+                    self.imeis.append(date + '\t' + imei + '\t' + crash_info.get('c') + '\n')
+                    self.temp.add(i_d_tuple)
 
         self.write_file(self.imeis, self.imei_file)
         self.write_file(self.crashs_list, self.no_repeat_file)
@@ -164,7 +168,7 @@ class InputProcess(Process):
 
 
 if __name__ == '__main__':
-    log_path = r'D:\TestData\log_analysis\plugin_crash_log\test'
+    log_path = r'D:\TestData\log_analysis\plugin_crash_log\0925'
     if len(sys.argv) > 1:
         log_path = sys.argv[1]
     if os.path.isdir(log_path):
