@@ -2,9 +2,9 @@ import re
 import os
 import sys
 
-DOUTU_CARASH = 'log\.gif\?(.*)KeyboardState.*'
-QUERY_STRING = DOUTU_CARASH
-LOG_DATE = '(\d+/[a-zA-Z]+/\d+)'
+REGEX_DOUTU_CARASH = 'log\.gif\?(.*)KeyboardState.*'
+REGEX_QUERY_STRING = REGEX_DOUTU_CARASH
+REGEX_LOG_DATE = '(\d+/[a-zA-Z]+/\d+)'
 
 
 class Log(object):
@@ -31,11 +31,11 @@ class Log(object):
 
     def _get_querystring(self):
         """
-        获取log 的querystring
+        获取log中 的querystring
         :return:
         """
         try:
-            re_info = re.compile(QUERY_STRING)
+            re_info = re.compile(REGEX_QUERY_STRING)
             query = re.search(re_info, self.line).group(1)
             return query
         except:
@@ -59,7 +59,7 @@ class Log(object):
     @property
     def date(self):
         try:
-            re_date = re.compile(LOG_DATE)
+            re_date = re.compile(REGEX_LOG_DATE)
             date = re.search(re_date, self.line).group(1)
             return date.replace('/', '-')
         except:
