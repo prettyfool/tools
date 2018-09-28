@@ -3,4 +3,5 @@
 *.exe
 *.jar
 .venv/*
+*.pyc
 
