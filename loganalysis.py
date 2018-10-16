@@ -92,6 +92,28 @@ class InputCrashLog(Log):
         type_name = self.crash_log.split(':')[0]
         return type_name.split('.')[-1]
 
+class Count(object):
+    """input crash count about every type crash"""
+    def __init__(self):
+        # 崩溃总次数和人数
+        self.total_num = 0
+        self.total_imei = 0
+        # class_not_found 崩溃的总次数和人数
+        self.class_not_found_num = 0
+        self.class_not_found_imei = 0
+
+    def add_total_num(self):
+        self.total_num += 1
+
+    def add_total_imei(self):
+        self.total_imei += 1
+
+    def add_class_not_found_num(self):
+        self.class_not_found_num += 1
+
+    def add_class_not_found_imei(self):
+        self.class_not_found_imei += 1
+
 
 class Process(object):
     def write_file(self, lines, file_path):
@@ -119,7 +141,7 @@ class InputProcess(Process):
         if not os.path.exists(out_dir):
             os.mkdir(out_dir)
         self.output = out_dir
-        file_name = os.path.basename(log_file)
+        file_name = os.path.basename(self.inputfile)
         if not ext:
             file_name = file_name + '.log'
         self.imei_file = os.path.join(self.output, 'imei_' + file_name)
@@ -166,16 +188,50 @@ class InputProcess(Process):
                 c = '{0:<3} {1}\n'.format(value, key)
                 count.write(c)
 
+class InputCount(Process):
+    def __init__(self, inputfile):
+        self.inputfile = os.path.abspath(inputfile)
+        self.result = Count()
+        self.all_imei = set()
+        self.not_found_imei = set()
+
+    def run(self):
+        lines = self.read_file(self.inputfile, 'doutu')
+        for line in lines:
+            crash_info = InputCrashLog(line)
+            if line:
+                imei = crash_info.imei
+                self.result.add_total_num()
+                if imei not in self.all_imei:
+                    self.result.add_total_imei()
+                    self.all_imei.add(imei)
+                if 'ClassNotFoundException' in line:
+                    self.result.add_class_not_found_num()
+                    if imei not in self.not_found_imei:
+                        self.result.add_class_not_found_imei()
+                        self.not_found_imei.add(imei)
+
+    def get_result(self):
+        print(self.result.total_num, self.result.total_imei, self.result.class_not_found_num, self.result.class_not_found_imei)
+        print("崩溃总次数：{}".format(self.result.total_num))
+        print("崩溃总人数：{}".format(self.result.total_imei))
+        print("崩溃总次数(notfound)：{}".format(self.result.class_not_found_num))
+        print("崩溃总人数(notfound)：{}".format(self.result.class_not_found_imei))
+        return self.result
 
 if __name__ == '__main__':
-    log_path = r'D:\TestData\log_analysis\plugin_crash_log\0925'
-    if len(sys.argv) > 1:
-        log_path = sys.argv[1]
-    if os.path.isdir(log_path):
-        log_list = [os.path.join(log_path, log_file) for log_file in os.listdir(log_path)]
-    else:
-        log_list = [log_path]
-    for log_file in log_list:
-        if os.path.isfile(log_file):
-            process = InputProcess(log_file)
-            process.run()
+    # log_path = r'D:\TestData\log_analysis\plugin_crash_log\0925'
+    # if len(sys.argv) > 1:
+    #     log_path = sys.argv[1]
+    # if os.path.isdir(log_path):
+    #     log_list = [os.path.join(log_path, log_file) for log_file in os.listdir(log_path)]
+    # else:
+    #     log_list = [log_path]
+    # for log_file in log_list:
+    #     if os.path.isfile(log_file):
+    #         process = InputProcess(log_file)
+    #         process.run()
+    log_path = r'D:\TestData\log_analysis\plugin_crash_log\8.21\20181010_8.21_log.log'
+    res = InputCount(log_path)
+    res.run()
+    res.get_result()
