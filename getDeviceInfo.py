@@ -75,10 +75,11 @@ def get_anr():
     """
     cmd = 'adb pull /datasource/anr/traces.txt .'
     os.popen(cmd)
+    return os.path.realpath('traces.txt')
 
 
 if __name__ == "__main__":
-    init()
+    start_adb()
     print(get_brand())
     print(get_model())
     print(get_os_version())
