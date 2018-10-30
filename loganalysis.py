@@ -3,49 +3,24 @@ import os
 import sys
 
 REGEX_DOUTU_CARASH = 'log\.gif\?(.*)HTTP'
-REGEX_QUERY_STRING = REGEX_DOUTU_CARASH
-REGEX_LOG_DATE = '(\d+/[a-zA-Z]+/\d+)'
+REGEX_LOG_DATE = '(\d+/[a-zA-Z]+/[\d+|:])'
 
 
 class Log(object):
     def __init__(self, line, **kwargs):
         """
-        :param querysting: 只包含主要信息的消息体，即url中的参数
-        :param split: 
         :param kwargs: 
         """
         self.line = line
-        self._querystring = self._get_querystring()
-        self.params = {}
-        if self._querystring:
-            for param in self._querystring.split('&'):
-                p_list = param.split('=')
-                if len(p_list) == 2:
-                    k, v = p_list
-                else:
-                    k, v = p_list[0], '='.join(p_list[1:])
-                self.params[k] = v
         if kwargs:
             for m, n in kwargs:
                 self.set(m, n)
-
-    def _get_querystring(self):
-        """
-        获取log中 的querystring
-        :return:
-        """
-        try:
-            re_info = re.compile(REGEX_QUERY_STRING)
-            query = re.search(re_info, self.line).group(1)
-            return query
-        except:
-            return None
 
     def set(self, name, value):
         setattr(self, name, value)
 
     def get(self, name):
-        value = getattr(self, name, None) or self.params.get(name, None)
+        value = getattr(self, name, None)
         return value
 
     @property
@@ -54,14 +29,22 @@ class Log(object):
 
     @property
     def time(self):
-        return self.line.split()[1]
-
-    @property
-    def date(self):
         try:
             re_date = re.compile(REGEX_LOG_DATE)
             date = re.search(re_date, self.line).group(1)
             return date.replace('/', '-')
+        except:
+            return None
+
+    def get_querystring(self, pattern):
+        """
+        获取log中 的querystring
+        :return:
+        """
+        try:
+            re_info = re.compile(pattern)
+            query = re.search(re_info, self.line).group(1)
+            return query
         except:
             return None
 
@@ -70,6 +53,18 @@ class InputCrashLog(Log):
     def __init__(self, line, **kwargs):
         line = line.replace('log=log=', 'log=').strip()
         super(InputCrashLog, self).__init__(line, **kwargs)
+        self._querystring = self.get_querystring(REGEX_DOUTU_CARASH)
+        if self._querystring:
+            for param in self._querystring.split('&'):
+                p_list = param.split('=')
+                if len(p_list) == 2:
+                    k, v = p_list
+                    self.set(k, v)
+                else:
+                    if '||||' in param:
+                        other = param.split('||||')
+                        for p in other:
+                            self.set(*p.split('='))
 
     @property
     def imei(self):
@@ -156,7 +151,7 @@ class InputProcess(Process):
                     self.crash_count[flag] = 1
                 else:
                     self.crash_count[flag] += 1
-            date = crash_info.date
+            date = crash_info.time
             imei = crash_info.imei
 
             if imei and date:
