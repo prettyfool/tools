@@ -11,8 +11,8 @@ class Log(object):
     def __init__(self, line, **kwargs):
         """
         :param querysting: 只包含主要信息的消息体，即url中的参数
-        :param split: 
-        :param kwargs: 
+        :param split:
+        :param kwargs:
         """
         self.line = line
         self._querystring = self._get_querystring()
@@ -143,6 +143,7 @@ class InputProcess(Process):
         lines = self.read_file(self.inputfile, 'doutu')
         for line in lines:
             crash_info = InputCrashLog(line)
+            print(crash_info.crash_log)
             if line:
                 self.write_file(line, self.doutu_file)
             if 'ClassNotFoundException' not in line:
@@ -230,36 +231,36 @@ class InputCount(Process):
 
 
 if __name__ == '__main__':
-    # log_path = r'D:\TestData\log_analysis\plugin_crash_log\combine\combine.log'
-    # if len(sys.argv) > 1:
-    #     log_path = sys.argv[1]
-    # if os.path.isdir(log_path):
-    #     log_list = [os.path.join(log_path, log_file) for log_file in os.listdir(log_path)]
-    # else:
-    #     log_list = [log_path]
-    # for log_file in log_list:
-    #     if os.path.isfile(log_file):
-    #         process = InputProcess(log_file)
-    #         process.run()
-
-    # log_path = r'D:\TestData\log_analysis\plugin_crash_log\8.21\20181010_8.21_log.log'
-    # res = InputCount(log_path)
-    # res.run()
-    # res.get_result()
-
-    log_path = r'D:\TestData\log_analysis\plugin_crash_log\8.24'
-    log = r'D:\TestData\log_analysis\plugin_crash_log\8.24\combine.log'
+    log_path = r'D:\TestData\log_analysis\plugin_crash_log\8.24.2\20181025_8.24.2_log.log'
     if len(sys.argv) > 1:
         log_path = sys.argv[1]
     if os.path.isdir(log_path):
         log_list = [os.path.join(log_path, log_file) for log_file in os.listdir(log_path)]
     else:
         log_list = [log_path]
+    for log_file in log_list:
+        if os.path.isfile(log_file):
+            process = InputProcess(log_file)
+            process.run()
+
+    # log_path = r'D:\TestData\log_analysis\plugin_crash_log\8.21\20181010_8.21_log.log'
+    # res = InputCount(log_path)
+    # res.run()
+    # res.get_result()
+
+    # log_path = r'D:\TestData\log_analysis\plugin_crash_log\8.24'
+    # log = r'D:\TestData\log_analysis\plugin_crash_log\8.24\combine.log'
+    # if len(sys.argv) > 1:
+    #     log_path = sys.argv[1]
+    # if os.path.isdir(log_path):
+    #     log_list = [os.path.join(log_path, log_file) for log_file in os.listdir(log_path)]
+    # else:
+    #     log_list = [log_path]
 
     # process = Process()
     # process.combine_files(log_list, log)
     # p = InputProcess(log)
     # p.run()
-    count = InputCount(log)
-    count.run()
-    count.get_result()
+    # count = InputCount(log)
+    # count.run()
+    # count.get_result()
