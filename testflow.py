@@ -1,5 +1,5 @@
 # coding=utf-8
-__author__ = 'anyone'
+__author__ = 'majunfeng'
 import os
 import time
 import subprocess
@@ -72,11 +72,11 @@ if __name__ == '__main__':
     # 应用信息
     # packagename = 'com.xp.tugele'
     # luanchActivity = 'com.xp.tugele/com.xp.tugele.ui.LunchActivity'
-    packagename = 'com.tugele.expression'
-    luanchActivity = 'com.tugele.expression/.MainActivity'
+    packagename = 'com.doutu.expression'
+    luanchActivity = 'com.doutu.expression/.MainActivity'
 
     # 监控20秒，监控多久自己控制
-    limit = 20
+    limit = 60 * 3
     if len(sys.argv) > 1:
         limit = int(sys.argv[1])
 
