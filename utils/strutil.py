@@ -1,5 +1,6 @@
 __author__ = 'majunfeng'
 
+import hashlib
 
 def restore_str(like_byte_str):
     """
@@ -9,7 +10,16 @@ def restore_str(like_byte_str):
     return like_byte_str.encode('raw_unicode_escape').decode('utf-8')
 
 
+def get_md5(str_code):
+    """
+    获取字符的md5
+    :param str_code: 输入字符串
+    :return: 返回md5值
+    """
+    m = hashlib.md5()
+    m.update(str_code.encode('utf-8'))  # hash 时必须进行编码成utf-8
+    return m.hexdigest()
+
 if __name__ == '__main__':
-    b = 'GET /pv.gif?uigs_productid=tugeleapp&platform=0&id=ZX1G429PKC&version=4.4.0&channel=test_tugele&aid=1d366f62be7852cc&imei=355470062375429&page=36&action=1&searchSource=4&word=\xE8\x80\x83\xE8\x99\x91\xE8\x80\x83&  \xE7\x9C\x8B\xE7\x9C\x8B&searchHaveResult=1 HTTP/1.0'
-    c = '10.129.192.228 [22/Jun/2018:21:20:44 +0800] "GET /pv.gif?uigs_productid=tugeleapp&platform=0&id=ZX1G429PKC&version=4.4.0&channel=test_tugele&aid=1d366f62be7852cc&imei=355470062375429&page=49&action=1&expPackageId=4999&cardId=100&fromPage=79&expPackageName=\xE5\x8D\x96\xE8\x90\x8C\xE5\xB0\x8F\xE7\x86\x8A\xE7\x8C\xAB&cardName=\xE5\xB0\x8F\xE7\xBC\x96\xE6\x8E\xA8\xE8\x8D\x90&firstPage=79&expPackageType=1 HTTP/1.0" -'
-    print(restore_str(c))
+    a = '#测试#这是测试#FZXDZ'
+    print(get_md5(a).upper())
