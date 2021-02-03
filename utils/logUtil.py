@@ -16,11 +16,11 @@ def logger(logger=None, name='', **kwargs):
     if not logger:
         logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
-    if kwargs.has_key('formatter'):
+    if 'formatter' in kwargs:
         formatter = logging.Formatter(kwargs.get('formatter'))
     else:
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    if kwargs.has_key('logfile'):
+    if 'logfile' in kwargs:
         fh = logging.FileHandler(kwargs.get('logfile'))
         fh.setFormatter(formatter)
         logger.addHandler(fh)
