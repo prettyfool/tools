@@ -1,7 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea/*
-*.exe
 *.jar
-.venv/*
+venv/
 *.pyc
 
