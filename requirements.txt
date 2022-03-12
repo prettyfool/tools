@@ -4,7 +4,7 @@ cffi==1.11.5
 chardet==3.0.4
 cryptography==2.3.1
 idna==2.6
-numpy==1.15.1
+numpy==1.21.0
 opencv-python==4.2.0.32
 Pillow==9.0.1
 pycparser==2.18
