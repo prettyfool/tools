@@ -1,29 +1,37 @@
 # -*- coding:utf-8 -*-
 import os
 import hashlib
+import threading
 import tempfile
+import time
 
 import requests
 
-BLOCK_SIZE = 1024 * 8  # 单次最大读取文件字节大小
 
-
-def get_file_md5(file_path):
+def calculate_md5(file_path, block_size=2**20):
     """
-    @desc      获取文件的md5值
-    @file_path 文件的路径
-    @return    文件的md5值
+    计算文件的MD5值，适用GB以上的大文件
+    :param file_path: 文件路径
+    :param block_size: 每次读取文件的块大小。默认的块大小为1MB（2**20字节），这是一个合理的大小，可以在大多数情况下提供良好的性能。
+    :return:
     """
-    if not os.path.exists(file_path):
-        return None
-    mHash = hashlib.md5()
-    with open(file_path, 'rb') as f:
+    md5_hash = hashlib.md5()
+    with open(file_path, "rb") as file:
         while True:
-            block = f.read(1024 * 8)
-            if not block:
+            data = file.read(block_size)
+            if not data:
                 break
-            mHash.update(block)
-    return mHash.hexdigest()
+            md5_hash.update(data)
+    return md5_hash.hexdigest()
+
+
+if __name__ == '__main__':
+    file_path = '/Users/prettyfool/work/KA/OPPO/厂商同步/OTA/OPD2201_11_C_OTA_1010_all_oypX2K_10010111.zip'
+    st = time.time()
+    md5_value = calculate_md5(file_path)
+    print(f'MD5 value of {file_path}: {md5_value}')
+    print(f'时间结果：{time.time() - st}')
+
 
 
 def download_file(url, filename=None, outdir=None):
@@ -50,8 +58,3 @@ def download_file(url, filename=None, outdir=None):
             for chunk in r.iter_content(16 * 1024):
                 f.write(chunk)
     return filename
-
-if __name__ == "__main__":
-    file_path = r'E:\package\PKG_tugele\SGTugele_v4.4.0_Build_1141_20180607_test_tugele_debug.apk'
-    md5 = get_file_md5(file_path)
-    print(md5)
